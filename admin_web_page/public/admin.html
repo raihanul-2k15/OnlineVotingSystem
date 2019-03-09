@@ -1,0 +1,589 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Admin | VotingBD</title>
+	<!-- CryptoJS library -->
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/3.1.2/rollups/aes.js"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/3.1.2/rollups/pbkdf2.js"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/3.1.2/rollups/sha256.js"></script>
+	<script src="_helpers.js"></script>
+	<!-- AJAX Libraries -->
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+	<script src="https://canvasjs.com/assets/script/jquery.canvasjs.min.js"></script>
+    <!-- update the version number as needed -->
+    <script defer src="/__/firebase/5.5.8/firebase-app.js"></script>
+    <!-- include only the Firebase features as you need -->
+    <script defer src="/__/firebase/5.5.8/firebase-firestore.js"></script>
+    <script defer src="/__/firebase/5.5.8/firebase-storage.js"></script>
+    <!-- initialize the SDK after all desired features are loaded -->
+    <script defer src="/__/firebase/init.js"></script>
+
+    <style media="screen">
+		body {
+			background: #151412;
+			margin: 0;
+			color: white;
+		}
+		
+		.nav {
+			display: flex;
+		}
+		
+		.nav button {
+			flex: 1;
+			display: table-cell;
+			height: 50px;
+			font-size: 32px;
+			vertical-align: middle;
+			color: black;
+			border: none;
+			border-left: 1px solid yellow;
+			border-radius: 10px 10px 0 0;
+			margin: 0;
+			padding: 0 20px;
+			background: #908070;
+			cursor: pointer;
+		}
+		
+		.nav button.selected {
+			cursor: default;
+			color: white;
+			transition-duration: 0.4s;
+			background: #151412;
+		}
+		
+		.page {
+			color: #aaaaaa;
+			font-size: 18px;
+			width: 100%;
+		}
+		
+		.page p {
+			font-size: 20px;
+			font-family: Tahoma, Helvetika, Arial;
+		}
+		
+		.page input {
+			display: table-cell;
+			vertical-align: middle;
+			font-size: 18px;
+			background: #252525;
+			color: #aaaaaa;
+			border-radius: 2px;
+			border: 1px solid #aaaaaa;
+			margin: 10px;
+			padding: 6px;
+			height: 30px;
+			width: 450px;
+		}
+		
+		.page textarea, .page select {
+			font-size: 18px;
+			background: #252525;
+			color: #aaaaaa;
+			border-radius: 2px;
+			border: 1px solid #aaaaaa;
+			margin: 10px;
+			padding: 6px;
+			height: 100px;
+			width: 450px;
+		}
+		
+		.page button {
+			cursor: pointer;
+			font-size: 24px;
+			color: black;
+			border: none;
+			border-radius: 10px;
+			vertical-align: middle;
+			background: #2196f3;
+			margin: 10px;
+			width: 150px;
+			height: 50px;
+			
+		}
+		
+		.page button:disabled {
+			background: #807555;
+		}
+		
+		.page .left-sidebar {
+			flex: 25%;
+			margin: 0;
+			padding: 0;
+			background: #353535;
+		}
+		
+		.left-sidebar button {
+			display: table-cell;
+			width: 100%;
+			height: 50px;
+			font-size: 24px;
+			vertical-align: middle;
+			color: white;
+			border: none;
+			border-top: 1px solid yellow;
+			border-bottom: 10px 10px 0 0;
+			margin: 0;
+			padding: 10px 18px;
+			background: #353535;
+			cursor: pointer;
+		}
+		
+		.left-sidebar button.selected {
+			cursor: default;
+			color: white;
+			transition-duration: 0.4s;
+			background: #151412;
+		}
+		
+		.page .right-sidebar {
+			flex: 75%;
+			min-height: 100vh;
+			margin: 0;
+			padding: 0px;
+			display: flex;
+			flex-direction: column;
+			align-items: center;
+			justify-content: center;
+		}
+		canvs {position: static;}
+		#login-page .container, #regVoter-page .container, #createCamp-page .container {
+			width: 100%;
+			min-height: 100vh;
+			display: flex;
+			flex-direction: column;
+			align-items: center;
+			justify-content: center;
+		}
+		
+		#monitorCamp-page .container {
+			display: flex;
+			min-height: 100vh;
+			width: 100%;
+		}
+		
+    </style>
+  </head>
+  <body>
+	<div class="nav">
+		<button onclick="changeTab(this, 'login')" class="selected" disabled="disabled">Login</button>
+		<button onclick="changeTab(this, 'regVoter')">Register Voter</button>
+		<button onclick="changeTab(this, 'createCamp')">Create Campaign</button>
+		<button onclick="changeTab(this, 'monitorCamp')">Monitor Campaign</button>
+	</div>
+	
+	<div class="page" id="login-page">
+		<div class="container">
+			<p style="display:none; color:lime" id="already-logged-in">You've logged in successfully. Navigate to any other tab for admin control</p>
+			<input type="text" id="id" placeholder="admin id"/>
+			<input type="password" id="password" placeholder="password" />
+			<button id="login" onclick="adminLogin(this)">Login</button>
+			<p style="color:orange" id="login-msg"></p>
+		</div>
+	</div>
+	
+	<div class="page" id="regVoter-page" style="display:none">
+		<div class="container">
+			<p>Admin login required</p>
+			<input style="display:none" type="text" id="name" placeholder="Full Name"/>
+			<input style="display:none" type="text" id="voter-id" placeholder="Voter ID"/>
+			<input style="display:none" type="date" id="bday" placeholder="Birth date" />
+			<textarea style="display:none" id="address" placeholder="Address"></textarea>
+			<input style="display:none" type="file" id="voter-img" accept="image/jpeg"/>
+			<button style="display:none" id="reg-voter" onclick="voterReg(this)">Register</button>
+			<p style="color:orange" id="reg-voter-msg"></p>
+		</div>
+	</div>
+	
+	<div class="page" id="createCamp-page" style="display:none">
+		<div class="container">
+			<p>Admin login required</p>
+			<input style="display:none" type="text" id="cand-name" placeholder="Candidate Name"/>
+			<input style="display:none" type="text" id="cand-desc" placeholder="Description"/>
+			<input style="display:none" type="file" id="cand-img" accept="image/jpeg"/>
+			<button style="display:none" id="add-candidate" onclick="candidateAdd(this)">Add</button>
+			<p style="color:orange" id="add-candidate-msg"></p>
+			
+			<p style="display:none">Create New Campaign</p>
+			<input style="display:none" type="text" id="camp-name" placeholder="Candidate Name"/>
+			<select style="display:none" id="camp-candidates" multiple>
+				<!-- <option value="1">Sample option</option> -->
+			</select>
+			<button style="display:none" id="create-campaign" onclick="campaignCreate(this)">Create</button>
+			<p style="color:orange" id="create-campaign-msg"></p>
+		</div>
+	</div>
+	
+	<div class="page" id="monitorCamp-page" style="display:none">
+		<div class="container">
+			<div class="left-sidebar">
+				<!-- <button>Sample</button> -->
+			</div>
+			<div class="right-sidebar">
+				<p id="participants-count">Admin login required</p>
+				<div id="chart" style="width:50%; height:50%">
+				</div>
+				<button id="end-campaign" onclick="endSelectedCampaign()" style="display:none;width:350px">End Campaign</button>
+				<p id="result" style="display:none;font-size:28px">Leading: Sample</p>
+			</div>
+		</div>
+	</div>
+	
+    <script>
+		login = false;
+		
+      document.addEventListener('DOMContentLoaded', function() {
+		db = firebase.firestore();
+		storage = firebase.storage();
+		
+		changeTab = function(btn, page) {
+			$(btn).parent().children('.selected').removeClass('selected').removeAttr('disabled');
+			$(btn).attr('disabled', 'disabled').addClass('selected');
+			$('.page').css('display', 'none');
+			$('#'+page+'-page').css('display', 'block');
+			if (page == 'monitorCamp')
+				loadMonitorPage();
+			else if (page == 'regVoter')
+				loadRegVoterPage();
+			else if (page == "createCamp")
+				loadCreateCampPage();
+			
+		}
+		
+      });
+	  
+	  selectedCampaign = '';
+	  unsubscribe = 'first';
+	  function selectCampaign(b, c) {
+		if (unsubscribe != 'first')
+			unsubscribe(); // stop realtime update for previously selected campaign
+		selectedCampaign = c;
+		$(b).parent().children().removeClass('selected').removeAttr('disabled');
+		$(b).addClass('selected').attr('disabled', 'disabled');
+		unsubscribe = db.doc('votes/'+c).onSnapshot(snap => loadCampaign(c));
+	  }
+	  
+	  function loadRegVoterPage() {
+		if (!login) return;
+		
+		$('#regVoter-page').children().eq(0).children().eq(0).html('Register new voter');
+		$('#name').css('display', 'inline');
+		$('#voter-id').css('display', 'inline');
+		$('#bday').css('display', 'inline');
+		$('#address').css('display', 'inline');
+		$('#voter-img').css('display', 'inline');
+		$('#reg-voter').css('display', 'inline');
+	  }
+	  
+	  function loadCreateCampPage() {
+		if (!login) return;
+		
+		$('#createCamp-page').children().eq(0).children().eq(0).html('Add new Candidate');
+		$('#cand-name').css('display', 'inline');
+		$('#cand-desc').css('display', 'inline');
+		$('#cand-img').css('display', 'inline');
+		$('#add-candidate').css('display', 'inline');
+		
+		$('#createCamp-page').children().eq(0).children().eq(6).css('display', 'inline');
+		$('#camp-name').css('display', 'inline');
+		$('#camp-candidates').css('display', 'inline');
+		$('#create-campaign').css('display', 'inline');
+		
+		populateAvailableCandidateList();
+	  }
+	  
+	  function populateAvailableCandidateList() {
+		var $cc = $('#camp-candidates');
+		$cc.empty();
+		db.collection('candidates').get().then(snap => {
+				snap.forEach(doc => {
+					$cc.append($("<option />").val(doc.id).text(doc.get('name')));
+				});
+			}
+		);
+	  }
+	  
+	  async function candidateAdd(b) {
+		var name = $('#cand-name').val().trim();
+		var desc = $('#cand-desc').val().trim();
+		if (name == '' || desc == '') {
+			return;
+		}
+		
+		var newCandidate = {
+			"name": name,
+			"desc": desc
+		};
+		
+		$(b).attr('disabled', 'disabled');
+		
+		var datadoc = await db.doc('data/data').get();
+		var ccount = datadoc.get('totalCandidates');
+		
+		var imgFile = document.getElementById('cand-img').files[0];
+		if (imgFile) {
+			firebase.storage().ref().child((ccount+1)+'.jpg').put(imgFile).then(()=>console.log('Upload complete')).catch(e=>console.log(e));
+		}
+		
+		db.doc('candidates/' + (ccount+1)).set(newCandidate).then(() => {
+			dRef = db.doc('data/data');
+			db.runTransaction(tran => {
+				return tran.get(dRef).then(snap => {
+					var newCount = snap.get('totalCandidates') + 1;
+					tran.update(dRef, {totalCandidates : newCount});
+				});
+			}).then(() => console.log('Transaction successful')).catch(e => console.log(e));
+			
+			// no need confirmation for voters counter increment, so continue
+			$('#add-candidate-msg').css('color', 'lime').html('Success: Candidate added successfully!');
+			$('#add-candidate').removeAttr('disabled');
+			$('#cand-name').val('');
+			$('#cand-desc').val('');
+			$('#cand-img').val('');
+			populateAvailableCandidateList();
+		}).catch(e => {
+			$('#add-candidate-msg').css('color', 'orange').html('Failure: An error occured!');
+			$('#add-candidate').removeAttr('disabled');
+			console.log(e);
+		});
+	  }
+	  
+	  async function campaignCreate(btn) {
+		var name = $('#camp-name').val();
+		var candidates = $('#camp-candidates').val().map(Number);
+		var campaignDoc = {
+			active: true,
+			candidates: candidates
+		};
+		
+		if (name == '' || candidates.length < 2) {
+			return;
+		}
+		
+		var searchDoc = await db.doc('campaigns/'+name).get();
+		if (searchDoc.exists) {
+			$('#create-campaign-msg').css('color', 'orange').html('Failure: Campaign already exists!');
+			$('#create-campaign').removeAttr('disabled');
+			return;
+		}
+		
+		var countMap = {};
+		for (var i=0; i<candidates.length; i++) {
+			countMap[''+candidates[i]] = 0;
+		}
+		var voteDoc = {
+			count: countMap,
+			participants: Array()
+		};
+		
+		$('#create-campaign').attr('disabled', 'disabled');
+		var campDocTask = db.doc('campaigns/'+name).set(campaignDoc);
+		var voteDocTask = db.doc('votes/'+name).set(voteDoc);
+		dRef = db.doc('data/data');
+		var tranTask = db.runTransaction(tran => {
+			return tran.get(dRef).then(snap => {
+				var newCount = snap.get('totalCampaigns') + 1;
+				tran.update(dRef, {totalCampaigns : newCount});
+				tran.update(dRef, {currentCampaigns : firebase.firestore.FieldValue.arrayUnion(name)});
+			});
+		});
+		
+		Promise.all([campDocTask, voteDocTask, tranTask]).then(() => {
+			$('#create-campaign-msg').css('color', 'lime').html('Success: Campaign created successfully!');
+			$('#create-campaign').removeAttr('disabled');
+			$('#camp-name').val('');
+			$('#camp-candidates').removeAttr('selected');
+		}).catch(e=>{
+			$('#create-campaign-msg').css('color', 'orange').html('Failure: Unknown error occured!');
+			$('#create-campaign').removeAttr('disabled');
+			console.log(e);
+		});
+	  }
+	  
+	  function loadMonitorPage() {
+		if (!login) return;
+		
+		$('#participants-count').html('Select a campaign from left');
+		var leftBar = $('#monitorCamp-page .left-sidebar');
+		$(leftBar).empty();
+		db.collection('votes').get().then(snap => {
+			snap.forEach(d => {
+				var b = '<button onclick="selectCampaign(this,\''+d.id+'\')">'+d.id+'</button>';
+				$(leftBar).append(b);
+			});
+		});
+	  }
+	  
+	  function loadCampaign(campaign) {
+		db.collection('campaigns').doc(campaign).get().then(d => {
+			var ac = d.get('active');
+			var cd = d.get('candidates');
+			var tasks = new Array();
+			cd.forEach(i => tasks.push(db.doc('candidates/'+i).get()));
+			Promise.all(tasks).then(vals => {
+				var namesMap = new Object();
+				vals.forEach(val => namesMap[val.id] = val.get('name'));
+				db.doc('votes/'+campaign).get().then(snap => {
+					var pCount = snap.get('participants').length;
+					var vCountsMap = snap.get('count');
+					var dpts = new Array();
+					cd.forEach(i => dpts.push({label: namesMap[''+i], y: vCountsMap[''+i]}));
+					$('#participants-count').html('Total voters participated: '+pCount);
+
+					if (ac) {
+						$('#chart').css('visibility', 'hidden');
+						$('#end-campaign').css('display', 'inline');
+						$('#end-campaign').removeAttr('disabled');
+						$('#result').html('Campaign is still running');
+					} else {
+						var mx = 0;
+						for (var i in vCountsMap) {
+							if (vCountsMap[i] > mx) {
+								mx = vCountsMap[i];
+							}
+						}
+						var mxclist = [];
+						for (var i in vCountsMap) {
+							if (vCountsMap[i] == mx) {
+								mxclist.push(i);
+							}
+						}
+						
+
+						$('#chart').css('visibility', 'visible');
+						plotChart(campaign, dpts);
+						$('#end-campaign').css('display', 'none');
+						if (mxclist.length == 1) {
+							$('#result').html('Winner: ' + namesMap[mxclist[0]]);
+						} else {
+							$('#result').html('Tie among ' + mxclist.reduce((a, b) => namesMap[a] + ', ' + namesMap[b]));
+						}
+					}
+					$('#result').css('display', 'block');
+				});
+			});
+		});
+	  }
+	  
+	  function endSelectedCampaign() {
+		$('#end-campaign').attr('disabled', 'disabled');
+		db.doc('data/data').update({currentCampaigns: firebase.firestore.FieldValue.arrayRemove(selectedCampaign)});
+		db.doc('campaigns/'+selectedCampaign).update('active', false).then(() => loadCampaign(selectedCampaign))
+	  }
+	  
+	  function plotChart(cmp, dpts) {
+		var options = {
+			title: {
+				text: cmp              
+			},
+			data: [              
+				{
+					// Change type to "doughnut", "line", "splineArea", etc.
+					type: "column",
+					dataPoints: dpts
+				}
+			],
+			theme: "dark1",
+			animationEnabled: true,
+			interactivityEnabled: true,
+			backgroundColor: "#151412",
+		};
+		$("#chart").CanvasJSChart(options);
+	  }
+	  
+	  async function voterReg(b) {
+		//var iv = CryptoJS.lib.WordArray.random(128/8).toString(CryptoJS.enc.Hex);
+        //var salt = CryptoJS.lib.WordArray.random(128/8).toString(CryptoJS.enc.Hex);
+		var iv = "b182b7d1a6949d8fdcbec4b5fd047325";
+		var salt = "fd7e8b409640a3a3fa798fb2a3015b85";
+        var aesUtil = new AesUtil(128, 1000);
+		
+		//return;
+		// Testing complete
+		var name = $('#name').val().trim();
+		var voterID = $('#voter-id').val().trim();
+		var bday = $('#bday').val().trim();
+		var address = $('#address').val().trim();
+		var imgFile = document.getElementById('voter-img').files[0];
+		if (name == '' || voterID == '' || bday == '' || address == '' || !imgFile) {
+			return;
+		}
+		bday = new Date(bday);
+		bday.setHours(0);
+		bday.setMinutes(0);
+		bday.setSeconds(0);
+		bday.setMilliseconds(0);
+		var age = (new Date()).getFullYear() - bday.getFullYear();
+		bday = dateToStr(bday);
+		
+		var key = CryptoJS.SHA256(name + voterID + bday).toString();
+		var hash = CryptoJS.SHA256(key).toString();
+		
+		var newVoter = {
+			"voterid": aesUtil.encrypt(salt, iv, key, voterID),
+			"name": aesUtil.encrypt(salt, iv, key, name),
+			"address": aesUtil.encrypt(salt, iv, key, address),
+			"bday": aesUtil.encrypt(salt, iv, key, bday),
+			"age": aesUtil.encrypt(salt, iv, key, age.toString())
+		};
+		
+		$(b).attr('disabled', 'disabled');
+		db.collection('data').where('registeredVoters', 'array-contains', voterID).get().then(snap => {
+			if (snap.size == 0) {
+				var docTask = db.doc('voters/'+hash).set(newVoter);
+				var storageTask = firebase.storage().ref().child('voters').child(hash + '.jpg').put(imgFile);
+				dRef = db.doc('data/data');
+				var tranTask = db.runTransaction(tran => {
+					return tran.get(dRef).then(snap => {
+						var newCount = snap.get('totalVoters') + 1;
+						tran.update(dRef, {totalVoters : newCount});
+						tran.update(dRef, {registeredVoters : firebase.firestore.FieldValue.arrayUnion(voterID)});
+					});
+				});
+				Promise.all([docTask, tranTask], storageTask).then(() => {
+					console.log("Transaction successful");
+					console.log("Upload successful");
+					$('#reg-voter-msg').css('color', 'lime').html('Success: Voter registered successfully!');
+					$('#reg-voter').removeAttr('disabled');
+					$('#name').val('');
+					$('#bday').val('');
+					$('#voter-id').val('');
+					$('#address').val('');
+				}).catch(e => console.log(e));
+			} else {
+				$('#reg-voter-msg').css('color', 'orange').html('Error: Given Voter ID already exists');
+				$('#reg-voter').removeAttr('disabled');
+			}
+		});
+	  }
+	  
+	  function adminLogin(b) {
+		$(b).attr('disabled', 'disabled');
+		var id = $('#id').val();
+		var pwd = $('#password').val();
+		db.collection('admins').where('id', '==', id).get().then(snap => {
+			snap.forEach(d => {
+				if (d.get('password') == pwd) {
+					login = true;
+				}
+			});
+			if (login) {
+				$('#already-logged-in').css('display', 'block');
+				$('#id').css('display', 'none');
+				$('#password').css('display', 'none');
+				$('#login').css('display', 'none');
+				$('#login-msg').css('display', 'none');
+			} else {
+				$('#login-msg').css('display', 'block');
+				$('#login-msg').text('Wrong admin ID and password');
+			}
+			$(b).removeAttr('disabled');
+		});
+	  }
+	  
+    </script>
+  </body>
+</html>

@@ -1,0 +1,42 @@
+{
+  "project_info": {
+    "project_number": "981392585965",
+    "firebase_url": "https://votingbd.firebaseio.com",
+    "project_id": "votingbd",
+    "storage_bucket": "votingbd.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:981392585965:android:88c9a7ba757b3f80",
+        "android_client_info": {
+          "package_name": "com.raihanul.votingbd"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "981392585965-6tva7g1j2rbe3hpjcs21kllq9984c3oc.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "YOUR_API_KEY"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 1,
+          "other_platform_oauth_client": []
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

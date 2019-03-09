@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>VotingBD</title>
+
+    <!-- update the version number as needed -->
+    <script defer src="/__/firebase/5.5.8/firebase-app.js"></script>
+    <!-- include only the Firebase features as you need -->
+    <script defer src="/__/firebase/5.5.8/firebase-firestore.js"></script>
+    <script defer src="/__/firebase/5.5.8/firebase-storage.js"></script>
+    <!-- initialize the SDK after all desired features are loaded -->
+    <script defer src="/__/firebase/init.js"></script>
+
+    <style media="screen">
+		body {
+			background: #151412;
+			min-height: 100vh;
+			display: flex;
+			align-items: center;
+			justify-content: center;
+		}
+		
+		button {
+			display: table-cell;
+			height: 75px;
+			font-size: 32px;
+			vertical-align: middle;
+			color: black;
+			border: 2px solid red;
+			margin: 20px;
+			padding: 0 20px;
+			border-radius: 35px;
+			background: gray;
+			cursor: pointer;
+		}
+		
+		button:hover {
+			transition-duration: 0.4s;
+			background: cyan;
+			color: black;
+		}
+    </style>
+  </head>
+  <body>
+	<button onclick="selectPage('admin')">I'm an Admin</button>
+	<button onclick="selectPage('voter)">I'm a Voter</button>
+    <script>
+      document.addEventListener('DOMContentLoaded', function() {
+		selectPage = function (page) {
+			window.location.href = "admin.html";
+		}
+      });
+    </script>
+  </body>
+</html>

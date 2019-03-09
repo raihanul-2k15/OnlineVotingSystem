@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.widget.LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    tools:context=".VoteActivity">
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Vote"
+        android:textAlignment="center"
+        android:textColor="@android:color/holo_blue_dark"
+        android:padding="10sp"
+        android:textSize="30sp" />
+
+    <ProgressBar
+        android:id="@+id/loading_progress"
+        android:indeterminate="true"
+        android:indeterminateOnly="true"
+        android:visibility="visible"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
+
+    <TextView
+        android:id="@+id/already_voted"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="You have already voted for this campaign"
+        android:textSize="18sp"
+        android:padding="10sp"
+        android:textAlignment="center"
+        android:visibility="gone"/>
+
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/candidateList_recycler_view"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:scrollbars="vertical"
+        android:visibility="gone"/>
+
+    <Space
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_weight="1" />
+
+    <Button
+        style="@style/Widget.AppCompat.Button"
+        android:id="@+id/go_back_to_select"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:drawableLeft="@drawable/ic_arrow_back_black_24dp"
+        android:text="Go Back" />
+
+</android.widget.LinearLayout>

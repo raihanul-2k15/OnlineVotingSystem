@@ -1,0 +1,137 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.widget.LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    tools:context=".UserDetailsActivity">
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Voter Details"
+        android:textAlignment="center"
+        android:textColor="@android:color/holo_blue_dark"
+        android:padding="10sp"
+        android:textSize="30sp" />
+
+    <ScrollView
+        android:layout_weight="1"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical" >
+
+            <ProgressBar
+                android:id="@+id/img_loading_progress"
+                android:indeterminate="true"
+                android:indeterminateOnly="true"
+                android:visibility="visible"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" />
+
+            <ImageView
+                android:id="@+id/voter_img"
+                android:visibility="gone"
+                android:layout_width="240dp"
+                android:layout_height="240dp"
+                android:layout_gravity="center_horizontal" />
+
+            <TextView
+                android:id="@+id/user_details_txtName"
+                android:drawableLeft="@drawable/ic_person_black_24dp"
+                android:text="Name"
+                android:drawableTint="@color/colorAccent"
+                android:textSize="24sp"
+                android:layout_marginTop="8dp"
+                android:layout_marginBottom="8dp"
+                android:layout_marginLeft="48dp"
+                android:layout_marginRight="48dp"
+                android:drawablePadding="24dp"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" />
+            <TextView
+                android:id="@+id/user_details_txtVoterID"
+                android:drawableLeft="@drawable/ic_account_box_black_24dp"
+                android:text="Voter ID"
+                android:drawableTint="@color/colorAccent"
+                android:textSize="24sp"
+                android:layout_marginTop="8dp"
+                android:layout_marginBottom="8dp"
+                android:layout_marginLeft="48dp"
+                android:layout_marginRight="48dp"
+                android:drawablePadding="24dp"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" />
+            <TextView
+                android:id="@+id/user_details_txtBday"
+                android:drawableLeft="@drawable/ic_cake_black_24dp"
+                android:text="Birthdate"
+                android:drawableTint="@color/colorAccent"
+                android:textSize="24sp"
+                android:layout_marginTop="8dp"
+                android:layout_marginBottom="8dp"
+                android:layout_marginLeft="48dp"
+                android:layout_marginRight="48dp"
+                android:drawablePadding="24dp"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" />
+            <TextView
+                android:id="@+id/user_details_txtAge"
+                android:drawableLeft="@drawable/ic_refresh_black_24dp"
+                android:text="Age"
+                android:drawableTint="@color/colorAccent"
+                android:textSize="24sp"
+                android:layout_marginTop="8dp"
+                android:layout_marginBottom="8dp"
+                android:layout_marginLeft="48dp"
+                android:layout_marginRight="48dp"
+                android:drawablePadding="24dp"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" />
+            <TextView
+                android:id="@+id/user_details_txtAddress"
+                android:drawableLeft="@drawable/ic_home_black_24dp"
+                android:text="Address"
+                android:drawableTint="@color/colorAccent"
+                android:textSize="24sp"
+                android:layout_marginTop="8dp"
+                android:layout_marginBottom="8dp"
+                android:layout_marginLeft="48dp"
+                android:layout_marginRight="48dp"
+                android:drawablePadding="24dp"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" />
+
+        </LinearLayout>
+    </ScrollView>
+
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+
+        <Button
+            style="@style/Widget.AppCompat.Button"
+            android:id="@+id/go_back_to_login"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:drawableLeft="@drawable/ic_arrow_back_white_24dp"
+            android:textColor="#ffffff"
+            android:text="Go Back" />
+
+        <Button
+            style="@style/Widget.AppCompat.Button.Colored"
+            android:id="@+id/proceed_to_voting"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:drawableRight="@drawable/ic_arrow_forward_white_24dp"
+            android:text="Proceed" />
+    </LinearLayout>
+</android.widget.LinearLayout>
